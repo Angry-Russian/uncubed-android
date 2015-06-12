@@ -3,6 +3,8 @@ package com.ramblescript.uncubed.view;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Environment;
+import android.provider.Settings;
 
 import com.ramblescript.uncubed.model.Face;
 
@@ -55,14 +57,11 @@ public class FaceView implements UC_Drawable{
     public void draw(Canvas canvas) {
         canvas.save();
 
-        canvas.translate(x, y);
+        if(x != 0 || y != 0)    canvas.translate(x, y);
+        if(rotation != 0)       canvas.rotate(rotation);
+        if(w > 0 || h > 0)      canvas.translate(-w / 2, -h / 2);
+        if(scale !=1)           canvas.scale(scale, scale);
 
-
-        canvas.rotate(rotation);
-        canvas.translate(-w / 2, -h / 2);
-        canvas.scale(scale, scale);
-
-        canvas.drawPath(debugShape, debugPaint);
         //paint.setShadowLayer(16, 0, 0, paint.getColor());
         canvas.drawPath(shape, paint);
 
@@ -97,9 +96,11 @@ public class FaceView implements UC_Drawable{
         return this;
     }
 
+    public int getColor(){return paint.getColor();}
+
     public FaceView setRotation(float rotation) {
         this.rotation = rotation;
         return this;
     }
-
+    public float getRotation(){return this.rotation;}
 }

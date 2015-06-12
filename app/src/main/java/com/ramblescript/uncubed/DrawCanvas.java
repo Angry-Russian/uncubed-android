@@ -14,33 +14,41 @@ import com.ramblescript.uncubed.view.FaceView;
  */
 public class DrawCanvas extends View {
 
-    private FaceView cube;
+	private FaceView cube;
 
-    public DrawCanvas(Context context, AttributeSet attrs){
-        super(context, attrs);
+	public DrawCanvas(Context context, AttributeSet attrs){
+		super(context, attrs);
 
-        cube = CubeFactory.createCube(3, 3, "lotus").setRect(getWidth()/2, getHeight()/2, 0, 0, 0);
+		cube = CubeFactory.createCube(3, 3, "lotus").setRect(getWidth()/2, getHeight()/2, 0, 0, 0);
 
-        invalidate();
+		invalidate();
+	}
 
-    }
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh){
+		super.onSizeChanged(w, h, oldw, oldh);
+		cube.setRect(w/2, h/2, 0, 0, 0);
+	}
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh){
-        super.onSizeChanged(w, h, oldw, oldh);
-        cube.setRect(w/2, h/2, 0, 0, 0);
-    }
+	@Override
+	protected void onDraw(Canvas c){
+		cube.draw(c);
+	}
 
-    @Override
-    protected void onDraw(Canvas c){
-        cube.draw(c);
-    }
+	@Override
+	public boolean onTouchEvent(MotionEvent e){
+		switch(e.getAction()){
+			case MotionEvent.ACTION_DOWN:
+				break;
 
-    @Override
-    public boolean onTouchEvent(MotionEvent e){
-        cube.setRect(e.getX(), e.getY(), 0, 0, 0);
-        invalidate();
-        return true;
-    }
+			case MotionEvent.ACTION_UP:
+				break;
 
+			case MotionEvent.ACTION_MOVE:
+				break;
+		}
+		//cube.setRect(e.getX(), e.getY(), 0, 0, 0);
+		invalidate();
+		return true;
+	}
 }
