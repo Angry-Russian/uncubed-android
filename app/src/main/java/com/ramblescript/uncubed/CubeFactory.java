@@ -3,6 +3,7 @@ package com.ramblescript.uncubed;
 import com.ramblescript.uncubed.model.Face;
 import com.ramblescript.uncubed.view.FaceView;
 import com.ramblescript.uncubed.view.UC_Drawable;
+import android.graphics.Color;
 
 /**
  * Created by Dmitri on 6/12/2015.
@@ -15,9 +16,8 @@ public abstract class CubeFactory {
 
         FaceView[] components = new FaceView[d*(d-1)];
 
-        for(int i = 0; i<components.length; i++){
-            components[i] = new FaceView(null, 0xFF000000 + (int) Math.ceil(0xFFFFFF * Math.random()));
-        }
+        for(int i = 0, j = components.length; i<j; i++)
+            components[i] = new FaceView(null, Color.HSVToColor(255, new float[]{i * 360 / j, 1, 0.5f}));
 
         switch(disposition){
             // set positions and rotations according to a pattern
