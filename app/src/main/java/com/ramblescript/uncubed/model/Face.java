@@ -8,24 +8,22 @@ import android.util.Log;
 import com.ramblescript.uncubed.view.UC_Drawable;
 
 /**
+ *
  * Created by Dmitri on 24/5/15.
  */
-public class Face {
+public class Face implements Neighbor{
+	private boolean selected = false;
+	private int n = 4;
+	private Neighbor[] neighbors;
 
-	private Face[] neighbors;
-	private Face[] components;
-
-	private int directionOffset = 0;
-
-	public Face(){
-
+	public Face(int n){
+		this.n = n;
+		neighbors = new Face[n];
 	}
 
-	public Face getNeighbor(int direction){
-		Face res = null;
+	public Neighbor getNeighbor(int direction){
+		Neighbor res = null;
 		if(neighbors != null|| neighbors.length > 0){
-
-			direction += directionOffset;
 			if(direction < 0) direction = (direction % neighbors.length) + direction;
 			direction = direction % neighbors.length;
 
@@ -34,12 +32,25 @@ public class Face {
 		return res;
 	}
 
-	public void setNeighbor(int direction, Face neighbor){
+	public void setNeighbor(int direction, Neighbor neighbor){
 		if(neighbors != null && neighbors.length > direction)
-			neighbors[(direction + directionOffset)%neighbors.length] = neighbor;
+			neighbors[direction%neighbors.length] = neighbor;
 		else Log.e("Face", "Trying to set neighbor outside of array range");
 	}
 
-	public Face[] getComponents(){return components;}
-	public void setComponents(){this.components = components;}
+	public boolean isSelected(){
+		return this.selected;
+	}
+
+	public void select(){
+		this.selected = true;
+	}
+
+	public void select(boolean s){
+		this.selected = s;
+	}
+
+	public boolean isHomogeneous(){
+		return true;
+	}
 }

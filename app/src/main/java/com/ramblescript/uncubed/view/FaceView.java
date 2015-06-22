@@ -13,6 +13,8 @@ import com.ramblescript.uncubed.model.Face;
  */
 public class FaceView implements UC_Drawable{
 
+	public int id = -1;
+
     private UC_Drawable[] components;
 
     private Paint paint = new Paint();
@@ -63,11 +65,29 @@ public class FaceView implements UC_Drawable{
         if(scale !=1)           canvas.scale(scale, scale);
 
         //paint.setShadowLayer(16, 0, 0, paint.getColor());
-        canvas.drawPath(shape, paint);
+		if(model != null && model.isSelected())
+			paint.setAlpha(128);
+
+		canvas.drawPath(shape, paint);
+
+		paint.setAlpha(255);
 
         if(null != components) for (int i = 0, j = components.length; i<j; i++) {
             components[i].draw(canvas);
         }
+
+
+		Paint textPaint = new Paint();
+		textPaint.setColor(0xFFFFFFFF);
+		textPaint.setAntiAlias(true);
+		textPaint.setStrokeWidth(20);
+		textPaint.setStyle(Paint.Style.FILL);
+		textPaint.setStrokeJoin(Paint.Join.ROUND);
+		textPaint.setStrokeCap(Paint.Cap.ROUND);
+
+		canvas.translate((int)w/2, (int)h/2);
+		canvas.scale(3, 3);
+		if(this.model != null) canvas.drawText("" + id, 0, 0, textPaint);
         canvas.restore();
     }
 
@@ -98,8 +118,8 @@ public class FaceView implements UC_Drawable{
 
     public int getColor(){return paint.getColor();}
 
-    public FaceView setRotation(float rotation) {
-        this.rotation = rotation;
+    public FaceView setRotation(float rad) {
+        this.rotation = rad;
         return this;
     }
     public float getRotation(){return this.rotation;}
