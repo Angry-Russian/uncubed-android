@@ -86,7 +86,7 @@ public abstract class CubeFactory {
 						up = components[(i-d)].getModel();
 					}
 
-					//f.setNeighbor(3, new FaceAdapter(up, 0));
+					f.setNeighbor(3, new FaceAdapter(up, 0));
 
 				}
 				break;

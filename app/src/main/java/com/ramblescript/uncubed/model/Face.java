@@ -18,7 +18,7 @@ public class Face implements Neighbor{
 
 	public Face(int n){
 		this.n = n;
-		neighbors = new Face[n];
+		neighbors = new Neighbor[n];
 	}
 
 	public Neighbor getNeighbor(int direction){
