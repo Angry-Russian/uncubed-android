@@ -2,6 +2,7 @@ package com.ramblescript.uncubed;
 
 import com.ramblescript.uncubed.model.Face;
 import com.ramblescript.uncubed.model.FaceAdapter;
+import com.ramblescript.uncubed.model.Neighbor;
 import com.ramblescript.uncubed.view.FaceView;
 import com.ramblescript.uncubed.view.UC_Drawable;
 import android.graphics.Color;
@@ -15,8 +16,9 @@ public abstract class CubeFactory {
 
 		FaceView face = new FaceView(new Face(0), 0).setRect(300, 300, 0, 0, 0);
 
-		FaceView[] components = new FaceView[d*(d-1)];
 		Face[] faces = new Face[d*(d-1)];
+		FaceView[] components = new FaceView[d*d-d];
+		FaceView[][] componentFaces = new FaceView[d*d-d][div*div];
 
 		// create main faces and views
 		for(int i = 0, j = components.length; i<j; i++) {
@@ -27,6 +29,8 @@ public abstract class CubeFactory {
 			fv.id = i;
 			components[i] = fv;
 		}
+
+
 		switch(disposition){
 			// set positions and rotations according to a pattern
 			// ... sounds like a Strategy :O
@@ -57,12 +61,15 @@ public abstract class CubeFactory {
 
 					// create face tiles
 					for(int j = 0, k=cubeFaceComponents.length; j<k; j++){
-						FaceView faceTile = new FaceView(null,color).setRect(2+(2+jw) * (j%div) + jw/2, 2+(2+jh) * (int)Math.floor(j / div) + jh/2, jw, jh, 0);
+						Face f = new Face(4);
+						FaceView faceTile = new FaceView(f,color).setRect(2 + (2+jw) * (j%div) + jw/2, 2+(2+jh) * (int)Math.floor(j / div) + jh/2, jw, jh, 0);
 						faceTile.id = j;
 						cubeFaceComponents[j] = faceTile;
 					}
+
 					cubeFace.setColor(64, 128, 128, 128);
 					cubeFace.setComponents(cubeFaceComponents);
+					componentFaces[i] = cubeFaceComponents;
 				}
 
 				// once everything is created and positioned, connect it all together
@@ -86,8 +93,26 @@ public abstract class CubeFactory {
 						up = components[(i-d)].getModel();
 					}
 
-					f.setNeighbor(3, new FaceAdapter(up, 0));
+					f.setNeighbor(3, new FaceAdapter(up, offsetV));
+					up.setNeighbor(1, new FaceAdapter(f, -offsetV));
+					f.setNeighbor(2, new FaceAdapter(left, offsetH));
+					left.setNeighbor(0, new FaceAdapter(f, -offsetV));
 
+					FaceView[] cFaces = componentFaces[i];
+					for(int k = 0, l = cFaces.length; k<l; k++){
+
+						if(Math.floor(k/div) == 0){
+							// connect upward-edge neighbor: previous layer
+						}else{
+							// connect upward-local neighbor
+						}
+
+						if(k%div == div-1){
+							// connect rightward-edge neighbor
+						}else {
+							// connect rightward-local neighbor
+						}
+					}
 				}
 				break;
 			case "tower" : break;

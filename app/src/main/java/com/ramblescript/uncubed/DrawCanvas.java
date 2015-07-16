@@ -48,6 +48,7 @@ public class DrawCanvas extends View {
 				break;
 		}
 		//cube.setRect(e.getX(), e.getY(), 0, 0, 0);
+		cube.checkSelection(e.getX(), e.getY());
 		invalidate();
 		return true;
 	}

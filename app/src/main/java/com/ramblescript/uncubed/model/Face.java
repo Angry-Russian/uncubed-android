@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.ramblescript.uncubed.view.UC_Drawable;
 
+import java.util.ArrayList;
+
 /**
  *
  * Created by Dmitri on 24/5/15.
@@ -19,6 +21,10 @@ public class Face implements Neighbor{
 	public Face(int n){
 		this.n = n;
 		neighbors = new Neighbor[n];
+	}
+
+	public Neighbor[] getNeighbors(){
+		return this.neighbors;
 	}
 
 	public Neighbor getNeighbor(int direction){
@@ -36,6 +42,20 @@ public class Face implements Neighbor{
 		if(neighbors != null && neighbors.length > direction)
 			neighbors[direction%neighbors.length] = neighbor;
 		else Log.e("Face", "Trying to set neighbor outside of array range");
+	}
+
+	public ArrayList<Neighbor> getLoop(int d){
+		ArrayList<Neighbor> loop = new ArrayList<Neighbor>();
+		return this.getLoop(d, loop);
+	}
+
+	public ArrayList<Neighbor> getLoop(int d, ArrayList<Neighbor> loop){
+		if(!loop.contains(this)) {
+			loop.add(this);
+			Neighbor next = getNeighbor(d);
+			if (next != null) next.getLoop(d, loop);
+		}
+		return loop;
 	}
 
 	public boolean isSelected(){
