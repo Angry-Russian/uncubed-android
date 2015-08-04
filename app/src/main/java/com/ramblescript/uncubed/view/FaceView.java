@@ -85,9 +85,9 @@ public class FaceView implements UC_Drawable{
 		textPaint.setStrokeJoin(Paint.Join.ROUND);
 		textPaint.setStrokeCap(Paint.Cap.ROUND);
 
-		canvas.translate((int) w / 2, (int) h / 2);
-		canvas.scale(3, 3);
-		if(this.model != null) canvas.drawText("" + id, 0, 0, textPaint);
+		//canvas.translate((int) w / 2, (int) h / 2);
+		//canvas.scale(3, 3);
+		//if(this.model != null) canvas.drawText("" + id, 0, 0, textPaint);
 		canvas.restore();
 	}
 
@@ -131,12 +131,13 @@ public class FaceView implements UC_Drawable{
 		double dy = y - this.y;
 
 		// calculate polar radians and distance, compensate for rotation
-		double rad = Math.atan2(dy, dx) - this.rotation;
+		double r = this.rotation/180*Math.PI;
+		double rad = Math.atan2(dy, dx);
 		double d = Math.sqrt(dx*dx + dy*dy);
 
 		// compensate for rotation and use as new values
-		dx = Math.cos(rad) * d + this.w/2;
-		dy = Math.sin(rad) * d + this.h/2;
+		dx = Math.cos(rad-r) * d + this.w/2;
+		dy = Math.sin(rad-r) * d + this.h/2;
 
 		boolean selected = Math.abs(dx - this.w/2) < this.w/2 + .5
 						&& Math.abs(dy - this.h/2) < this.h/2 + .5;
