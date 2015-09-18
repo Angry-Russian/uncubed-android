@@ -4,6 +4,7 @@ import com.ramblescript.uncubed.model.Face;
 import com.ramblescript.uncubed.model.FaceAdapter;
 import com.ramblescript.uncubed.model.Neighbor;
 import com.ramblescript.uncubed.view.FaceView;
+import com.ramblescript.uncubed.view.FaceViewPolar;
 import com.ramblescript.uncubed.view.UC_Drawable;
 import android.graphics.Color;
 
@@ -34,9 +35,11 @@ public abstract class CubeFactory {
 		switch(disposition){
 			// set positions and rotations according to a pattern
 			// ... sounds like a Strategy :O
-			case "lotus" :
-
+			case "box" :
+				// return
 				float radius = (float)Math.sqrt(side*side*2);
+                float layerRadius = (float) side;
+
 				for(int i = 0; i<components.length; i++){
 
 					FaceView cubeFace = components[i];
@@ -44,15 +47,16 @@ public abstract class CubeFactory {
 					float deg = 360 / d;
 					float rad = deg / 180 * (float)Math.PI;
 
-					float doffset = deg * (float)(Math.floor(i/d)) / 2 - 30;
+					float doffset = deg * (float)(Math.floor(i/d)) / 2 - 45;
 					float roffset = doffset / 180 * (float)Math.PI;
 
-					float ix = radius * (float)(Math.cos(rad*i + roffset) * (.5+Math.floor(i/d)));
-					float iy = radius * (float)(Math.sin(rad*i + roffset) * (.5+Math.floor(i/d)));
+                    float layerSize = (float) Math.floor(i/d)*side;
+					float ix = (radius*0.5f + layerSize) * (float)(Math.cos(rad*i + roffset));
+					float iy = (radius*0.5f + layerSize) * (float)(Math.sin(rad*i + roffset));
 					float iw = side;
 					float ih = iw;
 
-					cubeFace.setRect(ix, iy, iw, ih, deg * i + doffset - 45);
+					cubeFace.setRect(ix, iy, iw, ih, deg * i + doffset - 45 + 180);
 					FaceView[] cubeFaceComponents = new FaceView[div*div];
 
 					int color =  cubeFace.getColor();
@@ -67,7 +71,7 @@ public abstract class CubeFactory {
 						cubeFaceComponents[j] = faceTile;
 					}
 
-					cubeFace.setColor(64, 128, 128, 128);
+					cubeFace.setColor(64, 200, 200, 220);
 					cubeFace.setComponents(cubeFaceComponents);
 					componentFaces[i] = cubeFaceComponents;
 				}
@@ -101,22 +105,50 @@ public abstract class CubeFactory {
 					FaceView[] cFaces = componentFaces[i];
 					for(int k = 0, l = cFaces.length; k<l; k++){
 
-						if(Math.floor(k/div) == 0){
+                        Face thisFace = cFaces[k].getModel();
+						if(k<div){
 							// connect upward-edge neighbor: previous layer
-						}else{
+                            if(layer<d-2) { // unless you're in the last layer, connect blah
+                                Face upward = componentFaces[(j + i - d) % j][div * div - div + k].getModel();
+                                thisFace.setNeighbor(3, new FaceAdapter(upward, 0));
+                                upward.setNeighbor(1, new FaceAdapter(thisFace, 0));
+
+                            }else{ // otherwise, connect to neighboring face and mod direction
+                                Face upward = componentFaces[((i+1)%d) + layer*d][k*div].getModel();
+                                thisFace.setNeighbor(3, new FaceAdapter(upward, 1));
+                                upward.setNeighbor(2, new FaceAdapter(thisFace, -1));
+                            }
+
+						}else{ // you're inside the face
 							// connect upward-local neighbor
+                            Face upward = cFaces[k-div].getModel();
+                            thisFace.setNeighbor(3, new FaceAdapter(upward, 0));
+                            upward.setNeighbor(1, new FaceAdapter(thisFace, 0));
 						}
 
 						if(k%div == div-1){
-							// connect rightward-edge neighbor
+                            if(layer == 0) {
+                                Face rightward = componentFaces[(i + 1) % d][(int) Math.floor(k / div) + div * div - div].getModel();
+                                rightward.setNeighbor(1, new FaceAdapter(thisFace, 1));
+                                thisFace.setNeighbor(0, new FaceAdapter(rightward, -1));
+
+                            }else{
+                                Face rightward = componentFaces[(layer-1)*d+((i+1)%d)][k-div+1].getModel();
+                                rightward.setNeighbor(2, new FaceAdapter(thisFace, 0));
+                                thisFace.setNeighbor(0, new FaceAdapter(rightward, 0));
+                            }
 						}else {
-							// connect rightward-local neighbor
+                            Face rightward = cFaces[k+1].getModel();
+                            rightward.setNeighbor(2, new FaceAdapter(thisFace, 0));
+                            thisFace.setNeighbor(0, new FaceAdapter(rightward, 0));
 						}
 					}
 				}
 				break;
-			case "tower" : break;
-			case "box" : break;
+			case "tower" :
+				break;
+			case "lotus" :
+				break;
 		}
 
 		face.setComponents(components);

@@ -76,4 +76,12 @@ public class FaceAdapter implements Neighbor{
 	public ArrayList<Neighbor> getLoop(int dir, ArrayList<Neighbor> loop) { return target.getLoop(dir + directionOffset, loop); }
 
 	public void setNeighbor(int dir, Neighbor face){ target.setNeighbor(dir + directionOffset, face); }
+
+	public void select(){
+		target.select();
+	}
+
+	public void select(boolean s){
+		target.select(s);
+	}
 }

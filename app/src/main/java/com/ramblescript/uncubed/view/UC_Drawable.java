@@ -9,4 +9,5 @@ public interface UC_Drawable {
     void draw(Canvas canvas);
     
     void checkSelection(double x, double y);
+    void deselect();
 }

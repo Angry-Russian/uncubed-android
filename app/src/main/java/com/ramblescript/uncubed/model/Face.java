@@ -29,8 +29,8 @@ public class Face implements Neighbor{
 
 	public Neighbor getNeighbor(int direction){
 		Neighbor res = null;
-		if(neighbors != null|| neighbors.length > 0){
-			if(direction < 0) direction = (direction % neighbors.length) + direction;
+		if(neighbors != null && neighbors.length > 0){
+			if(direction < 0) direction = (direction % neighbors.length) + neighbors.length;
 			direction = direction % neighbors.length;
 
 			res = neighbors[direction];

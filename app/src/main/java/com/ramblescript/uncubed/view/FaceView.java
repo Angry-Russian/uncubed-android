@@ -5,6 +5,10 @@ import android.graphics.Paint;
 import android.graphics.Path;
 
 import com.ramblescript.uncubed.model.Face;
+import com.ramblescript.uncubed.model.Neighbor;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Dmitri on 6/12/2015.
@@ -15,19 +19,19 @@ public class FaceView implements UC_Drawable{
 
 	private UC_Drawable[] components;
 
-	private Paint paint = new Paint();
-	private Path shape = new Path();
+	protected Paint paint = new Paint();
+	protected Path shape = new Path();
 
-	private Paint debugPaint = new Paint();
-	private Path debugShape = new Path();
+	protected Paint debugPaint = new Paint();
+	protected Path debugShape = new Path();
 
-	private Face parent;
-	private double rotation = 0;
-	private float x = 0;
-	private float y = 0;
-	private float w = 32;
-	private float h = 32;
-	private double scale = 1;
+	protected Face parent;
+	protected double rotation = 0;
+	protected float x = 0;
+	protected float y = 0;
+	protected float w = 32;
+	protected float h = 32;
+	protected double scale = 1;
 
 	private double sqrt2 = Math.sqrt(2);
 
@@ -85,9 +89,9 @@ public class FaceView implements UC_Drawable{
 		textPaint.setStrokeJoin(Paint.Join.ROUND);
 		textPaint.setStrokeCap(Paint.Cap.ROUND);
 
-		//canvas.translate((int) w / 2, (int) h / 2);
-		//canvas.scale(3, 3);
-		//if(this.model != null) canvas.drawText("" + id, 0, 0, textPaint);
+		canvas.translate((int) w / 2, (int) h / 2 + 16);
+		canvas.scale(3, 3);
+		if(this.model != null) canvas.drawText("" + id, 0, 0, textPaint);
 		canvas.restore();
 	}
 
@@ -142,10 +146,26 @@ public class FaceView implements UC_Drawable{
 		boolean selected = Math.abs(dx - this.w/2) < this.w/2 + .5
 						&& Math.abs(dy - this.h/2) < this.h/2 + .5;
 
-		if(model != null) model.select(selected);
+		if(model != null){
+			if(selected) model.select();
+			ArrayList<Neighbor> selection = model.getLoop(3);
+            //selection.addAll(model.getLoop(1));
+			Iterator<Neighbor> si = selection.listIterator();
+			if(selected) while(si.hasNext()){
+				Neighbor s = si.next();
+				s.select();
+			}
+		}
 
 		if(components != null) for(int i = 0, j = components.length; i<j; i++){
 			if(selected || w == 0 || h == 0) components[i].checkSelection(dx, dy);
+		}
+	}
+
+	public void deselect() {
+		model.select(false);
+		if(components != null) for(int i = 0, j = components.length; i<j; i++){
+			components[i].deselect();
 		}
 	}
 }

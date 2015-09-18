@@ -10,4 +10,7 @@ public interface Neighbor {
 	Neighbor getNeighbor(int dir);
 	ArrayList<Neighbor> getLoop(int dir);
 	ArrayList<Neighbor> getLoop(int dir, ArrayList<Neighbor> loop);
+
+	void select();
+	void select(boolean s);
 }
