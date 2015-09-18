@@ -19,7 +19,7 @@ public class DrawCanvas extends View {
 	public DrawCanvas(Context context, AttributeSet attrs){
 		super(context, attrs);
 
-		cube = CubeFactory.createCube(4, 3, 200, "box").setRect(getWidth()/2, getHeight()/2, 0, 0, 0);
+		cube = CubeFactory.createCube(3, 3, 256, "box").setRect(getWidth()/2, getHeight()/2, 0, 0, 0);
 
 		invalidate();
 	}

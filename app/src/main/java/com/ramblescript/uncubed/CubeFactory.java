@@ -47,7 +47,7 @@ public abstract class CubeFactory {
 					float deg = 360 / d;
 					float rad = deg / 180 * (float)Math.PI;
 
-					float doffset = deg * (float)(Math.floor(i/d)) / 2 - 45;
+					float doffset = deg * (float)(Math.floor(i/d)) / 2 - 30;
 					float roffset = doffset / 180 * (float)Math.PI;
 
                     float layerSize = (float) Math.floor(i/d)*side;
@@ -109,7 +109,7 @@ public abstract class CubeFactory {
 						if(k<div){
 							// connect upward-edge neighbor: previous layer
                             if(layer<d-2) { // unless you're in the last layer, connect blah
-                                Face upward = componentFaces[(j + i - d) % j][div * div - div + k].getModel();
+                                Face upward = componentFaces[(i + d) % j][div * div - div + k].getModel();
                                 thisFace.setNeighbor(3, new FaceAdapter(upward, 0));
                                 upward.setNeighbor(1, new FaceAdapter(thisFace, 0));
 

@@ -89,9 +89,10 @@ public class FaceView implements UC_Drawable{
 		textPaint.setStrokeJoin(Paint.Join.ROUND);
 		textPaint.setStrokeCap(Paint.Cap.ROUND);
 
-		canvas.translate((int) w / 2, (int) h / 2 + 16);
+        // debugging, uncomment to show face numbers
+		/*canvas.translate((int) w / 2, (int) h / 2 + 16);
 		canvas.scale(3, 3);
-		if(this.model != null) canvas.drawText("" + id, 0, 0, textPaint);
+		if(this.model != null) canvas.drawText("" + id, 0, 0, textPaint);//*/
 		canvas.restore();
 	}
 
@@ -148,8 +149,8 @@ public class FaceView implements UC_Drawable{
 
 		if(model != null){
 			if(selected) model.select();
-			ArrayList<Neighbor> selection = model.getLoop(3);
-            //selection.addAll(model.getLoop(1));
+			ArrayList<Neighbor> selection = model.getLoop(0);
+            selection.addAll(model.getLoop(1));
 			Iterator<Neighbor> si = selection.listIterator();
 			if(selected) while(si.hasNext()){
 				Neighbor s = si.next();
