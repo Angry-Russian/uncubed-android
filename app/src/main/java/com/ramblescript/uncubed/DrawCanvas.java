@@ -47,7 +47,7 @@ public class DrawCanvas extends View {
 			case MotionEvent.ACTION_MOVE:
 				break;
 		}
-        
+
 		cube.deselect();
 		cube.checkSelection(e.getX(), e.getY());
 		invalidate();

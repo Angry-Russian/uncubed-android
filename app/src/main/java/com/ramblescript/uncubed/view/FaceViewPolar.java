@@ -20,47 +20,47 @@ public class FaceViewPolar extends FaceView {
     }
 
     @Override
+    /**
+     * @param x defines rotation about the origin poing. A.k.a. the Theta component.
+     * @param y defines distant from origin, a.k.a. the radius component
+     * @param w defines the width of the rectangle, in degrees
+     * @param h defines the height of the rectangle as the radius component
+     * @param r defines the rotation of the rectangle about its center
+     *
+     */
     public FaceView setRect(float x, float y, float w, float h, float r){
         shape.reset();
-        this.rotation = r*2;
 
-        Coords line = null;
-        Coords center = new Coords(x, y);
-        float range = (float) Math.PI / 3;
-        double hypothenuse = Math.sqrt(w*w+h*h);
+        Coords center = new Coords(0, 0);
+        float radAngle = w;
 
-        int steps = 90;
+        Coords coords = null;
+        Coords lastCoords = null;
+
+        double xoffset = x;///180*Math.PI;
+
+        for(int i = 0; i<=4; i++){
+            double a = i * Math.PI/2;
+            double theta = w * Math.sin(a) + xoffset;
+            double radius = h * Math.cos(a) + y;
 
 
-        line = Coords.polarToCartesian(center, range, 1);
-        shape.moveTo(line.x, line.y);
+            lastCoords = coords;
+            coords  = new Coords(theta, radius);
 
-        {// from point1 to point 2
-            float step = range / steps;
-            float variation = (float) ((hypothenuse - h) / steps);
-
-            for(int i = 0; i<steps; i++){
-                line = Coords.polarToCartesian(center, -range+i*step, h+variation*i);
-                shape.lineTo(line.x, line.y);
+            if(i==0){
+                Coords corner = Coords.polarToCartesian(center, coords.x, coords.y);
+                shape.moveTo((float)corner.x, (float)corner.y);
+            }else{
+                Coords delta = new Coords((coords.x - lastCoords.x)/120, (coords.y - lastCoords.y)/120);
+                for(int j = 0; j<120; j++){
+                    Coords corner = Coords.polarToCartesian(center,
+                            lastCoords.x + delta.x*j,
+                            lastCoords.y + delta.y*j);
+                    shape.lineTo((float)corner.x, (float)corner.y);
+                }
             }
         }
-
-
-        {// from point2 to point 3
-            float step = range / steps;
-            float variation = (float) ((hypothenuse - h) / steps);
-
-            for(int i = 0; i<steps; i++){
-                line = Coords.polarToCartesian(center, i*step, (float) hypothenuse-variation*i);
-                shape.lineTo(line.x, line.y);
-            }
-        }
-
-        line = Coords.polarToCartesian(center, range, h);
-        shape.lineTo(line.x, line.y);
-
-        line = Coords.polarToCartesian(center, range, 1);
-        shape.lineTo(line.x, line.y);
 
         return this;
     }
@@ -70,17 +70,29 @@ public class FaceViewPolar extends FaceView {
         canvas.save();
         canvas.rotate((float) this.rotation);
         canvas.drawPath(shape, this.paint);
+
+        if(null != components) for (int i = 0, j = components.length; i<j; i++) {
+            components[i].draw(canvas);
+        }
+
+        if(model != null && model.isSelected())
+            paint.setAlpha(255);
+        else paint.setAlpha(88);
+
+
+        Paint textPaint = new Paint();
+        textPaint.setColor(0xFFFFFFFF);
+        textPaint.setAntiAlias(true);
+        textPaint.setStrokeWidth(20);
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setStrokeJoin(Paint.Join.ROUND);
+        textPaint.setStrokeCap(Paint.Cap.ROUND);
+
         canvas.restore();
-        this.rotation++;
     }
-/*
+
     @Override
     public void checkSelection(double x, double y) {
-
+        
     }
-
-    @Override
-    public void deselect() {
-
-    }*/
 }
