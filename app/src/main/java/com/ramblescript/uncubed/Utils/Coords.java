@@ -24,4 +24,17 @@ public class Coords {
 
         return new Coords((float)tx, (float)ty);
     }
+
+    public static Coords cartToPolar(Coords center, double x, double y){
+        double theta;
+        double radius;
+        if(center == null){
+            theta = Math.atan2(y, x);
+            radius = Math.sqrt(x*x+y*y);
+        }else{
+            theta = Math.atan2(y - center.y, x - center.x);
+            radius = Math.sqrt(x*x+y*y);
+        }
+        return new Coords(theta, radius);
+    };
 }

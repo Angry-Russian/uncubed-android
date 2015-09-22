@@ -3,14 +3,21 @@ package com.ramblescript.uncubed.view;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Region;
 
 import com.ramblescript.uncubed.Utils.Coords;
 import com.ramblescript.uncubed.model.Face;
+import com.ramblescript.uncubed.model.Neighbor;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by dmitri on 11/09/15.
  */
 public class FaceViewPolar extends FaceView {
+
+    private Region area = new Region();
 
     public FaceViewPolar(Face model, int color){
         super(model, color);
@@ -41,9 +48,8 @@ public class FaceViewPolar extends FaceView {
 
         for(int i = 0; i<=4; i++){
             double a = i * Math.PI/2;
-            double theta = w * Math.sin(a) + xoffset;
-            double radius = h * Math.cos(a) + y;
-
+            double theta = w * Math.sin(a+r) + xoffset;
+            double radius = h * Math.cos(a+r) + y;
 
             lastCoords = coords;
             coords  = new Coords(theta, radius);
@@ -61,7 +67,7 @@ public class FaceViewPolar extends FaceView {
                 }
             }
         }
-
+        area.setPath(shape, new Region(-4500, -4500, 9000, 9000));
         return this;
     }
 
@@ -69,7 +75,16 @@ public class FaceViewPolar extends FaceView {
     public void draw(Canvas canvas) {
         canvas.save();
         canvas.rotate((float) this.rotation);
+
+        int tcolor = this.getColor();
+        paint.setColor(tcolor);
+        paint.setStyle(Paint.Style.FILL);
         canvas.drawPath(shape, this.paint);
+        paint.setColor(0xFFFFFFFF);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(0.5f);
+        canvas.drawPath(shape, this.paint);
+        paint.setColor(tcolor);
 
         if(null != components) for (int i = 0, j = components.length; i<j; i++) {
             components[i].draw(canvas);
@@ -79,20 +94,33 @@ public class FaceViewPolar extends FaceView {
             paint.setAlpha(255);
         else paint.setAlpha(88);
 
-
-        Paint textPaint = new Paint();
-        textPaint.setColor(0xFFFFFFFF);
-        textPaint.setAntiAlias(true);
-        textPaint.setStrokeWidth(20);
-        textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setStrokeJoin(Paint.Join.ROUND);
-        textPaint.setStrokeCap(Paint.Cap.ROUND);
-
         canvas.restore();
     }
 
     @Override
     public void checkSelection(double x, double y) {
-        
+
+        boolean selected = area.contains((int) x, (int) y);
+
+        if(model != null){
+            if(selected) model.select();
+            ArrayList<Neighbor> selection = model.getLoop(0);
+            selection.addAll(model.getLoop(1));
+            Iterator<Neighbor> si = selection.listIterator();
+            if(selected) while(si.hasNext()){
+                Neighbor s = si.next();
+                s.select();
+            }
+        }
+
+        if(selected){
+            this.model.select();
+            if(components != null) for(int i = 0, j = components.length; i<j; i++){
+                components[i].checkSelection(x, y);
+            }
+
+        }
+
     }
+
 }
