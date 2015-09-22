@@ -90,7 +90,7 @@ public class FaceView implements UC_Drawable{
 		textPaint.setStrokeCap(Paint.Cap.ROUND);
 
         // debugging, uncomment to show face numbers
-		canvas.translate((int) w / 2, (int) h / 2 + 16);
+		/*canvas.translate((int) w / 2, (int) h / 2 + 16);
 		canvas.scale(3, 3);
 		if(this.model != null) canvas.drawText("" + id, 0, 0, textPaint);//*/
 		canvas.restore();

@@ -29,7 +29,7 @@ abstract class UncubedGame {
 
     public static FaceView getInstance() {
         if(instance == null)
-            instance = CubeFactory.createCube(3, 5, 256, "lotus");
+            instance = CubeFactory.createCube(5, 5, 256, "lotus");
 
         return instance;
     }
