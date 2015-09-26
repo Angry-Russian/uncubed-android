@@ -1,4 +1,4 @@
-package com.ramblescript.uncubed;
+package com.ramblescript.uncubed.Utils;
 
 import com.ramblescript.uncubed.model.Face;
 import com.ramblescript.uncubed.view.FaceView;

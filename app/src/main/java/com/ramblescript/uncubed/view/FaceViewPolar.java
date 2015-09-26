@@ -18,6 +18,8 @@ import java.util.Iterator;
 public class FaceViewPolar extends FaceView {
 
     private Region area = new Region();
+    private Region clip = new Region( -4500, -4500, 9000, 9000);
+    private double roll = 0;
 
     public FaceViewPolar(Face model, int color){
         super(model, color);
@@ -28,7 +30,7 @@ public class FaceViewPolar extends FaceView {
 
     @Override
     /**
-     * @param x defines rotation about the origin poing. A.k.a. the Theta component.
+     * @param x defines rotation about the origin. A.k.a. the Theta component.
      * @param y defines distant from origin, a.k.a. the radius component
      * @param w defines the width of the rectangle, in degrees
      * @param h defines the height of the rectangle as the radius component
@@ -38,17 +40,37 @@ public class FaceViewPolar extends FaceView {
     public FaceView setRect(float x, float y, float w, float h, float r){
         shape.reset();
 
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.rotation = r;
+
         Coords center = new Coords(0, 0);
         float radAngle = w;
 
         Coords coords = null;
-        Coords lastCoords = null;
+        Coords lastCoords;
 
-        double xoffset = x;///180*Math.PI;
+        if(parent != null){
+            x = parent.x + x;
+            y = parent.y + y;
+            /*/Coords c = Coords.cartToPolar(null, x/parent.w, y/parent.h);
+            c.x -= parent.rotation;
+            c = Coords.polarToCartesian(null, c.x, c.y);
+            x = parent.x + (float)(c.x*parent.w);
+            y = parent.y + (float)(c.y*parent.h);//*/
+                                /*/
+                                (float) (stepT * (k%div) - stepT * Math.floor(k/div)),
+                                (float) (-stepR * (1+k%div) - stepR * Math.floor(k/div) + side),
+                                //*/
+            r = (float)(parent.rotation + r);
+        }
 
         for(int i = 0; i<=4; i++){
-            double a = i * Math.PI/2;
-            double theta = w * Math.sin(a+r) + xoffset;
+
+            double a = i * Math.PI/2 + Math.PI/4;
+            double theta = w * Math.sin(a+r) + x;
             double radius = h * Math.cos(a+r) + y;
 
             lastCoords = coords;
@@ -67,14 +89,14 @@ public class FaceViewPolar extends FaceView {
                 }
             }
         }
-        area.setPath(shape, new Region(-4500, -4500, 9000, 9000));
+        area.setPath(shape, clip);
         return this;
     }
 
     @Override
     public void draw(Canvas canvas) {
         canvas.save();
-        canvas.rotate((float) this.rotation);
+        //canvas.rotate((float) this.rotation);
 
         int tcolor = this.getColor();
         paint.setColor(tcolor);
@@ -115,12 +137,12 @@ public class FaceViewPolar extends FaceView {
 
         if(selected){
             this.model.select();
-            if(components != null) for(int i = 0, j = components.length; i<j; i++){
-                components[i].checkSelection(x, y);
+            if(components != null){
+                for(int i = 0, j = components.length; i<j; i++){
+                    components[i].checkSelection(x, y);
+                }
             }
-
+            setRect(this.x, this.y, w, h, (float)rotation);
         }
-
     }
-
 }

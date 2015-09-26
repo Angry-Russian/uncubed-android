@@ -1,9 +1,8 @@
-package com.ramblescript.uncubed;
+package com.ramblescript.uncubed.Utils;
 
 import android.graphics.Color;
 
 import com.ramblescript.uncubed.model.Face;
-import com.ramblescript.uncubed.model.FaceAdapter;
 import com.ramblescript.uncubed.view.FaceView;
 
 /**

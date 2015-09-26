@@ -1,12 +1,11 @@
 package com.ramblescript.uncubed;
 
+import com.ramblescript.uncubed.Utils.AbstractFaceViewPlacementStrategy;
+import com.ramblescript.uncubed.Utils.BoxFaceViewPlacementStrategy;
+import com.ramblescript.uncubed.Utils.RadialFaceViewPlacementStrategy;
 import com.ramblescript.uncubed.model.Face;
 import com.ramblescript.uncubed.model.FaceAdapter;
-import com.ramblescript.uncubed.model.Neighbor;
 import com.ramblescript.uncubed.view.FaceView;
-import com.ramblescript.uncubed.view.FaceViewPolar;
-import com.ramblescript.uncubed.view.UC_Drawable;
-import android.graphics.Color;
 
 /**
  * Created by Dmitri on 6/12/2015.

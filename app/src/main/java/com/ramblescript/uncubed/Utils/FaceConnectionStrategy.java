@@ -1,4 +1,4 @@
-package com.ramblescript.uncubed;
+package com.ramblescript.uncubed.Utils;
 
 /**
  * Created by dmitri on 20/09/15.

@@ -3,6 +3,7 @@ package com.ramblescript.uncubed.view;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 
 import com.ramblescript.uncubed.model.Face;
 import com.ramblescript.uncubed.model.Neighbor;
@@ -25,7 +26,6 @@ public class FaceView implements UC_Drawable{
 	protected Paint debugPaint = new Paint();
 	protected Path debugShape = new Path();
 
-	protected Face parent;
 	protected double rotation = 0;
 	protected float x = 0;
 	protected float y = 0;
@@ -35,7 +35,17 @@ public class FaceView implements UC_Drawable{
 
 	private double sqrt2 = Math.sqrt(2);
 
-	protected Face model = null;
+    protected FaceView parent = null;
+
+    protected Face model = null;
+
+    public FaceView getParent() {
+        return parent;
+    }
+
+    public void setParent(FaceView parent) {
+        this.parent = parent;
+    }
 
 	public void setModel(Face model){this.model = model;}
 	public Face getModel(){return model;}
@@ -165,8 +175,10 @@ public class FaceView implements UC_Drawable{
 
 	public void deselect() {
 		model.select(false);
-		if(components != null) for(int i = 0, j = components.length; i<j; i++){
-			components[i].deselect();
-		}
+		if(components != null){
+            for(int i = 0, j = components.length; i<j; i++){
+                components[i].deselect();
+            }
+        }
 	}
 }

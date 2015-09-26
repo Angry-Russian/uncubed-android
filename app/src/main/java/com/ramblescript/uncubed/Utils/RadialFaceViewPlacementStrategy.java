@@ -1,4 +1,4 @@
-package com.ramblescript.uncubed;
+package com.ramblescript.uncubed.Utils;
 
 import android.graphics.Color;
 
@@ -24,7 +24,7 @@ public class RadialFaceViewPlacementStrategy extends AbstractFaceViewPlacementSt
             double width = Math.PI / d;
 
             FaceView fv = new FaceViewPolar(f, Color.HSVToColor(255, new float[]{i * 360 / j, 1, 0.5f}))
-                    .setRect((float) (rtheta), (float) radius, (float) width, side, 0);
+                    .setRect((float) (rtheta), (float) radius, (float) width, side, (float)(Math.PI/4*1));
             //fv.setRotation((float) theta);
             fv.deselect();
             fv.id = i;
@@ -37,13 +37,15 @@ public class RadialFaceViewPlacementStrategy extends AbstractFaceViewPlacementSt
 
             for (int k = 0, l = cubeFaceComponents.length; k < l; k++) {
                 Face cf = new Face(4);
-                FaceView faceTile = new FaceViewPolar(cf, fv.getColor())
-                        .setRect(
-                                (float) (rtheta + stepT * (k%div) - stepT * Math.floor(k/div)),
-                                (float) (radius - stepR * (1+k%div) - stepR * Math.floor(k/div) + side),
-                                (float) (width / div),
-                                (float) (side / div), 0);
-                faceTile.deselect();
+                FaceViewPolar faceTile = new FaceViewPolar(cf, fv.getColor());
+                faceTile.setParent(fv);
+                faceTile.setRect(
+                                /*(float) (stepT*1.41 * (k%div) - width/2),
+                                (float) (stepR*1.41 * Math.floor(k/div) - side/2),
+                                /*/(float) (stepT * (k%div) - stepT * Math.floor(k/div)),
+                                (float) (-stepR * (1+k%div) - stepR * Math.floor(k/div) + side),//*/
+                                (float) (stepT),
+                                (float) (stepR), 0);
 
                 faceTile.id = k;
                 cubeFaceComponents[k] = faceTile;
@@ -51,6 +53,7 @@ public class RadialFaceViewPlacementStrategy extends AbstractFaceViewPlacementSt
 
             fv.setColor(64, 200, 200, 220);
             fv.setComponents(cubeFaceComponents);
+            fv.deselect();
             componentFaces[i] = cubeFaceComponents;
         }
     }
