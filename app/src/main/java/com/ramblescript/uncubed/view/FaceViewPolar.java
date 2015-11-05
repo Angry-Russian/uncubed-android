@@ -9,6 +9,7 @@ import com.ramblescript.uncubed.Utils.Coords;
 import com.ramblescript.uncubed.model.Face;
 import com.ramblescript.uncubed.model.Neighbor;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -21,6 +22,11 @@ public class FaceViewPolar extends FaceView {
     private Region clip = new Region( -4500, -4500, 9000, 9000);
     private double roll = 0;
 
+    /**
+     * A FaceView object that draws itself around its (or its parent's) origin.
+     * @param model
+     * @param color
+     */
     public FaceViewPolar(Face model, int color){
         super(model, color);
 
@@ -30,14 +36,15 @@ public class FaceViewPolar extends FaceView {
 
     @Override
     /**
-     * @param x defines rotation about the origin. A.k.a. the Theta component.
-     * @param y defines distant from origin, a.k.a. the radius component
-     * @param w defines the width of the rectangle, in degrees
+     * @param x defines rotation about the origin, from 0 to 2PI. A.k.a. the Theta component. This is the direction the face "points" in.
+     * @param y defines the distance of the View's center from origin, a.k.a. the radius component. y=0 makes a figure-8-like object, as the center is on the origin.
+     * @param w defines the width of the rectangle, in degrees.
      * @param h defines the height of the rectangle as the radius component
      * @param r defines the rotation of the rectangle about its center
      *
+     * Note: the polygon is drawn as a cicle with only 4 points, so the width is actually the diagonal of the square, not its side.
      */
-    public FaceView setRect(float x, float y, float w, float h, float r){
+    public FaceViewPolar setRect(float x, float y, float w, float h, double r){
         shape.reset();
 
         this.x = x;
@@ -96,7 +103,9 @@ public class FaceViewPolar extends FaceView {
     @Override
     public void draw(Canvas canvas) {
         canvas.save();
-        //canvas.rotate((float) this.rotation);
+
+        Animator animator = getAnimator();
+        if(animator != null) animator.visit(this);
 
         int tcolor = this.getColor();
         paint.setColor(tcolor);

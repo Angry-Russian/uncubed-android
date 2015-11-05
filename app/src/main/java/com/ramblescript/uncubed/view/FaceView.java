@@ -3,22 +3,23 @@ package com.ramblescript.uncubed.view;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 
+import com.ramblescript.uncubed.Utils.Rect;
 import com.ramblescript.uncubed.model.Face;
 import com.ramblescript.uncubed.model.Neighbor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Dmitri on 6/12/2015.
  */
-public class FaceView implements UC_Drawable{
+public class FaceView implements UC_Interactive {
 
 	public int id = -1;
 
-	protected UC_Drawable[] components;
+	protected UC_Interactive[] components;
 
 	protected Paint paint = new Paint();
 	protected Path shape = new Path();
@@ -38,6 +39,9 @@ public class FaceView implements UC_Drawable{
     protected FaceView parent = null;
 
     protected Face model = null;
+
+    protected Animator animator = null;
+    protected List<Animator> animatorQueue = new ArrayList<Animator>();
 
     public FaceView getParent() {
         return parent;
@@ -73,6 +77,8 @@ public class FaceView implements UC_Drawable{
 
 	public void draw(Canvas canvas) {
 		canvas.save();
+        Animator animator = getAnimator();
+        if(animator!= null) animator.visit(this);
 
 		if(x != 0 || y != 0)    canvas.translate(x, y);
 		if(rotation != 0)       canvas.rotate((float)rotation);
@@ -106,10 +112,10 @@ public class FaceView implements UC_Drawable{
 		canvas.restore();
 	}
 
-	public void setComponents(UC_Drawable[] components){this.components = components;}
-	public UC_Drawable[] getComponents(){return components;}
+	public void setComponents(UC_Interactive[] components){this.components = components;}
+	public UC_Interactive[] getComponents(){return components;}
 
-	public FaceView setRect(float x, float y, float w, float h, float rotation){
+	public FaceView setRect(float x, float y, float w, float h, double rotation){
 		this.x = x; this.y = y; this.w = w; this.h = h; this.rotation = rotation;
 
 		shape = new Path();
@@ -120,7 +126,9 @@ public class FaceView implements UC_Drawable{
 
 		return this;
 	}
-
+    public Rect getRect(){
+        return new Rect(x, y, w, h, rotation);
+    }
 	public FaceView setColor(int color){
 		paint.setColor(color);
 		return this;
@@ -181,4 +189,23 @@ public class FaceView implements UC_Drawable{
             }
         }
 	}
+
+    public void animate(Animator animator, boolean override) {
+        if(this.animator == null || override) {
+            this.animator = animator;
+        }else{
+            animatorQueue.add(animator);
+        }
+    }
+
+
+
+    protected Animator getAnimator(){
+        if(animator != null)
+            return animator;
+
+        if(animatorQueue.size() > 0)
+            animator = animatorQueue.remove(0);
+        return animator;
+    }
 }

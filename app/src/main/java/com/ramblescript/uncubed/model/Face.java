@@ -1,11 +1,6 @@
 package com.ramblescript.uncubed.model;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.util.Log;
-
-import com.ramblescript.uncubed.view.UC_Drawable;
 
 import java.util.ArrayList;
 

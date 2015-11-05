@@ -21,7 +21,7 @@ public class DrawCanvas extends View {
 
 		cube = UncubedGame.getInstance().setRect(getWidth()/2, getHeight()/2, 0, 0, 0);
 
-		invalidate();
+        invalidate();
 	}
 
 	@Override
@@ -32,7 +32,8 @@ public class DrawCanvas extends View {
 
 	@Override
 	protected void onDraw(Canvas c){
-		cube.draw(c);
+        cube.draw(c);
+        invalidate();
 	}
 
 	@Override
