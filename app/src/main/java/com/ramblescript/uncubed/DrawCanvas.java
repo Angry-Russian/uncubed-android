@@ -40,6 +40,10 @@ public class DrawCanvas extends View {
 	public boolean onTouchEvent(MotionEvent e){
 		switch(e.getAction()){
 			case MotionEvent.ACTION_DOWN:
+                cube.deselect();
+                cube.checkSelection(e.getX(), e.getY());
+                FaceView[] loop = cube.getLoop();
+                invalidate();
 				break;
 
 			case MotionEvent.ACTION_UP:
@@ -49,9 +53,6 @@ public class DrawCanvas extends View {
 				break;
 		}
 
-		cube.deselect();
-		cube.checkSelection(e.getX(), e.getY());
-		invalidate();
 		return true;
 	}
 }
