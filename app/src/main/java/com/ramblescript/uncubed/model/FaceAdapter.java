@@ -84,4 +84,14 @@ public class FaceAdapter implements Neighbor{
 	public void select(boolean s){
 		target.select(s);
 	}
+
+    @Override
+    public void setColor(int color) {
+        target.setColor(color);
+    }
+
+    @Override
+    public int getColor() {
+        return target.getColor();
+    }
 }

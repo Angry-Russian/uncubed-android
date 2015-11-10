@@ -10,7 +10,8 @@ import java.util.ArrayList;
  */
 public class Face implements Neighbor{
 	private boolean selected = false;
-	private int n = 4;
+	private int n = 4; // number of connections;
+    private int c = 0; // color;
 	private Neighbor[] neighbors;
 
 	public Face(int n){
@@ -65,7 +66,17 @@ public class Face implements Neighbor{
 		this.selected = s;
 	}
 
-	public boolean isHomogeneous(){
+    @Override
+    public void setColor(int color) {
+        this.c = color;
+    }
+
+    @Override
+    public int getColor() {
+        return c;
+    }
+
+    public boolean isHomogeneous(){
 		return true;
 	}
 }

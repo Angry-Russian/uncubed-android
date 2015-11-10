@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by Dmitri on 6/12/2015.
  */
-public class FaceView implements UC_Interactive {
+public class FaceView implements UC_Interactive{
 
 	public int id = -1;
 
@@ -58,18 +58,19 @@ public class FaceView implements UC_Interactive {
 		this.model = model;
 
 		paint.setColor(color);
+        model.setColor(color);
 		paint.setAntiAlias(true);
 		paint.setStrokeWidth(20);
 		paint.setStyle(Paint.Style.FILL);
 		paint.setStrokeJoin(Paint.Join.ROUND);
 		paint.setStrokeCap(Paint.Cap.ROUND);
 
-		debugPaint.setColor(color % 0x1000000 + 0xFF000000);
+		/*debugPaint.setColor(color % 0x1000000 + 0xFF000000);
 		debugPaint.setAntiAlias(true);
 		debugPaint.setStrokeWidth(2);
 		debugPaint.setStyle(Paint.Style.STROKE);
 		debugPaint.setStrokeJoin(Paint.Join.ROUND);
-		debugPaint.setStrokeCap(Paint.Cap.ROUND);
+		debugPaint.setStrokeCap(Paint.Cap.ROUND);//*/
 
 		shape.addRect(0, 0, 128, 128, Path.Direction.CW);
 		debugShape.addRect(0, 0, 128, 128, Path.Direction.CW);
@@ -90,6 +91,7 @@ public class FaceView implements UC_Interactive {
 			paint.setAlpha(255);
 		else paint.setAlpha(128);
 
+        paint.setColor(model.getColor());
 		canvas.drawPath(shape, paint);
 
 		if(null != components) for (int i = 0, j = components.length; i<j; i++) {
@@ -97,7 +99,7 @@ public class FaceView implements UC_Interactive {
 		}
 
 
-		Paint textPaint = new Paint();
+		/*Paint textPaint = new Paint();
 		textPaint.setColor(0xFFFFFFFF);
 		textPaint.setAntiAlias(true);
 		textPaint.setStrokeWidth(20);
@@ -112,7 +114,11 @@ public class FaceView implements UC_Interactive {
 		canvas.restore();
 	}
 
-	public void setComponents(UC_Interactive[] components){this.components = components;}
+    public void update(long deltaTime) {
+        //--
+    }
+
+    public void setComponents(UC_Interactive[] components){this.components = components;}
 	public UC_Interactive[] getComponents(){return components;}
 
 	public FaceView setRect(float x, float y, float w, float h, double rotation){
@@ -130,16 +136,17 @@ public class FaceView implements UC_Interactive {
         return new Rect(x, y, w, h, rotation);
     }
 	public FaceView setColor(int color){
-		paint.setColor(color);
+        model.setColor(color);
 		return this;
 	}
 
 	public FaceView setColor(int a, int r, int g, int b){
 		paint.setARGB(a, r, g, b);
+        model.setColor(paint.getColor());
 		return this;
 	}
 
-	public int getColor(){return paint.getColor();}
+	public int getColor(){return model.getColor();}
 
 	public FaceView setRotation(float rad) {
 		this.rotation = rad;
@@ -165,11 +172,14 @@ public class FaceView implements UC_Interactive {
 		boolean selected = Math.abs(dx - this.w/2) < this.w/2 + .5
 						&& Math.abs(dy - this.h/2) < this.h/2 + .5;
 
+        ArrayList<Neighbor> selection = null;
 		if(model != null){
 			if(selected) model.select();
-			ArrayList<Neighbor> selection = model.getLoop(0);
+
+			selection = model.getLoop(0);
             selection.addAll(model.getLoop(1));
 			Iterator<Neighbor> si = selection.listIterator();
+
 			if(selected) while(si.hasNext()){
 				Neighbor s = si.next();
 				s.select();
@@ -179,9 +189,45 @@ public class FaceView implements UC_Interactive {
 		if(components != null) for(int i = 0, j = components.length; i<j; i++){
 			if(selected || w == 0 || h == 0) components[i].checkSelection(dx, dy);
 		}
+
+        return;
 	}
 
-	public void deselect() {
+    @Override
+    public ArrayList<Neighbor> getSelected(double x, double y, int direction) {
+
+        // get relative coords
+        double dx = x - this.x;
+        double dy = y - this.y;
+
+        // calculate polar radians and distance, compensate for rotation
+        double r = this.rotation/180*Math.PI;
+        double rad = Math.atan2(dy, dx);
+        double d = Math.sqrt(dx*dx + dy*dy);
+
+        // compensate for rotation and use as new values
+        dx = Math.cos(rad-r) * d + this.w/2;
+        dy = Math.sin(rad-r) * d + this.h/2;
+
+        boolean selected = Math.abs(dx - this.w/2) < this.w/2 + .5
+                && Math.abs(dy - this.h/2) < this.h/2 + .5;
+
+        ArrayList<Neighbor> selection = new ArrayList<Neighbor>();
+        if(model != null){
+            if(components != null){
+                for(int i = 0, j = components.length; i<j; i++){
+                    if(selected || w == 0 || h == 0){
+                        ArrayList<Neighbor> comps = components[i].getSelected(dx, dy, direction);
+                        if(comps != null) selection.addAll(comps);
+                    }
+                }
+                return selection;
+            } else return model.getLoop(direction);
+        }
+        return null;
+    }
+
+    public void deselect() {
 		model.select(false);
 		if(components != null){
             for(int i = 0, j = components.length; i<j; i++){

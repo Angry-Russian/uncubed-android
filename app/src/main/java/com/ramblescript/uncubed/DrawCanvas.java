@@ -7,12 +7,20 @@ import android.view.View;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
+import com.ramblescript.uncubed.model.Neighbor;
 import com.ramblescript.uncubed.view.FaceView;
+import com.ramblescript.uncubed.view.UC_Interactive;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * Created by Dmitri on 18/5/15.
  */
 public class DrawCanvas extends View {
+
+    private long lastTick = 0;
+    private long tick = 0;
 
 	private FaceView cube;
 
@@ -21,7 +29,7 @@ public class DrawCanvas extends View {
 
 		cube = UncubedGame.getInstance().setRect(getWidth()/2, getHeight()/2, 0, 0, 0);
 
-        invalidate();
+		invalidate();
 	}
 
 	@Override
@@ -32,6 +40,9 @@ public class DrawCanvas extends View {
 
 	@Override
 	protected void onDraw(Canvas c){
+        lastTick = tick;
+        tick = System.currentTimeMillis();
+        cube.update(tick - lastTick);
         cube.draw(c);
         invalidate();
 	}
@@ -42,9 +53,26 @@ public class DrawCanvas extends View {
 			case MotionEvent.ACTION_DOWN:
                 cube.deselect();
                 cube.checkSelection(e.getX(), e.getY());
-                FaceView[] loop = cube.getLoop();
-                invalidate();
-				break;
+
+
+                ArrayList<Neighbor> loop = cube.getSelected(e.getX(), e.getY(), 2);
+
+                if(loop != null && loop.size() > 0){
+                    int l = loop.size();
+                    int[] colors = new int[l];
+
+                    for(int i = 0; i<l; i++){
+                        Neighbor nextTile = loop.get((i+1)%l);
+                        colors[i] = nextTile.getColor();
+                    }
+
+                    for(int i = 0; i<l; i++){
+                        loop.get(i).setColor(colors[i]);
+                    }
+
+                    invalidate();
+                }
+                break;
 
 			case MotionEvent.ACTION_UP:
 				break;

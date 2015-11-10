@@ -2,14 +2,12 @@ package com.ramblescript.uncubed.view;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Region;
 
 import com.ramblescript.uncubed.Utils.Coords;
 import com.ramblescript.uncubed.model.Face;
 import com.ramblescript.uncubed.model.Neighbor;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -108,14 +106,14 @@ public class FaceViewPolar extends FaceView {
         if(animator != null) animator.visit(this);
 
         int tcolor = this.getColor();
-        paint.setColor(tcolor);
+        setColor(tcolor);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawPath(shape, this.paint);
-        paint.setColor(0xFFFFFFFF);
+        setColor(0xFFFFFFFF);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(0.5f);
         canvas.drawPath(shape, this.paint);
-        paint.setColor(tcolor);
+        setColor(tcolor);
 
         if(null != components) for (int i = 0, j = components.length; i<j; i++) {
             components[i].draw(canvas);
@@ -133,9 +131,10 @@ public class FaceViewPolar extends FaceView {
 
         boolean selected = area.contains((int) x, (int) y);
 
+        ArrayList<Neighbor> selection = null;
         if(model != null){
             if(selected) model.select();
-            ArrayList<Neighbor> selection = model.getLoop(0);
+            selection = model.getLoop(0);
             selection.addAll(model.getLoop(1));
             Iterator<Neighbor> si = selection.listIterator();
             if(selected) while(si.hasNext()){
@@ -153,5 +152,38 @@ public class FaceViewPolar extends FaceView {
             }
             setRect(this.x, this.y, w, h, (float)rotation);
         }
+
+        return;
+    }
+
+    @Override
+    public ArrayList<Neighbor> getSelected(double x, double y, int direction) {
+
+        boolean selected = area.contains((int) x, (int) y);
+
+        ArrayList<Neighbor> selection = null;
+        if(model != null){
+            //if(selected) model.select();
+            selection = model.getLoop(direction);
+            Iterator<Neighbor> si = selection.listIterator();
+            if(selected) while(si.hasNext()){
+                Neighbor s = si.next();
+                //s.select();
+            }
+        }
+
+        if(selected){
+            ArrayList<Neighbor> componentSelection = new ArrayList<Neighbor>();
+            if(components != null){
+                for(int i = 0, j = components.length; i<j; i++){
+                    ArrayList<Neighbor> c = components[i].getSelected(x, y, direction);
+                    if(c!= null) componentSelection.addAll(c);
+                }
+                return componentSelection;
+            }
+            //setRect(this.x, this.y, w, h, (float)rotation);
+        }
+
+        return selection;
     }
 }
