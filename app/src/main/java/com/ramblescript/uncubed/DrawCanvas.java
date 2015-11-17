@@ -57,8 +57,8 @@ public class DrawCanvas extends View {
 
                 ArrayList<Neighbor> loop = cube.getSelected(e.getX(), e.getY(), 2);
 
-                if(loop != null && loop.size() > 0){
-                    int l = loop.size();
+                int l = loop.size();
+                if(loop != null && l > 0){
                     int[] colors = new int[l];
 
                     for(int i = 0; i<l; i++){
@@ -67,7 +67,7 @@ public class DrawCanvas extends View {
                     }
 
                     for(int i = 0; i<l; i++){
-                        loop.get(i).setColor(colors[i]);
+                        loop.get(i).setColor(0xFF0000FF);
                     }
 
                     invalidate();

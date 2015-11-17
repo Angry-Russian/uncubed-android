@@ -163,25 +163,8 @@ public class FaceViewPolar extends FaceView {
 
         ArrayList<Neighbor> selection = null;
         if(model != null){
-            //if(selected) model.select();
-            selection = model.getLoop(direction);
-            Iterator<Neighbor> si = selection.listIterator();
-            if(selected) while(si.hasNext()){
-                Neighbor s = si.next();
-                //s.select();
-            }
-        }
-
-        if(selected){
-            ArrayList<Neighbor> componentSelection = new ArrayList<Neighbor>();
-            if(components != null){
-                for(int i = 0, j = components.length; i<j; i++){
-                    ArrayList<Neighbor> c = components[i].getSelected(x, y, direction);
-                    if(c!= null) componentSelection.addAll(c);
-                }
-                return componentSelection;
-            }
-            //setRect(this.x, this.y, w, h, (float)rotation);
+            if(selected)
+                selection = model.getLoop(direction);
         }
 
         return selection;
