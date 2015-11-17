@@ -105,23 +105,30 @@ public class FaceViewPolar extends FaceView {
         Animator animator = getAnimator();
         if(animator != null) animator.visit(this);
 
-        int tcolor = this.getColor();
+        int tcolor = getColor();
+
+
         setColor(tcolor);
+
+        if(model != null && model.isSelected())
+            paint.setAlpha(255);
+        else paint.setAlpha(128);
         paint.setStyle(Paint.Style.FILL);
+
         canvas.drawPath(shape, this.paint);
-        setColor(0xFFFFFFFF);
+
+
+        //setColor(0xFFFFFFFF);
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(0.5f);
+        paint.setStrokeWidth(0.85f);
         canvas.drawPath(shape, this.paint);
-        setColor(tcolor);
+
+        setColor(tcolor);//*/
 
         if(null != components) for (int i = 0, j = components.length; i<j; i++) {
             components[i].draw(canvas);
         }
 
-        if(model != null && model.isSelected())
-            paint.setAlpha(255);
-        else paint.setAlpha(88);
 
         canvas.restore();
     }
@@ -161,10 +168,15 @@ public class FaceViewPolar extends FaceView {
 
         boolean selected = area.contains((int) x, (int) y);
 
-        ArrayList<Neighbor> selection = null;
-        if(model != null){
+        ArrayList<Neighbor> selection = new ArrayList<>();
+        if(components != null && components.length > 0) {
+            for (int i = 0; i < components.length; i++) {
+                ArrayList<Neighbor> comps = components[i].getSelected(x, y, direction);
+                if(comps != null) selection.addAll(comps);
+            }
+        }else if(model != null){
             if(selected)
-                selection = model.getLoop(direction);
+                selection.addAll(model.getLoop(direction));
         }
 
         return selection;

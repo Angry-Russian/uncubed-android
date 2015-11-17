@@ -137,6 +137,7 @@ public class FaceView implements UC_Interactive{
     }
 	public FaceView setColor(int color){
         model.setColor(color);
+        paint.setColor(color);
 		return this;
 	}
 

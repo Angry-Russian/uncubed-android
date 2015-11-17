@@ -2,6 +2,7 @@ package com.ramblescript.uncubed;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import android.graphics.Canvas;
@@ -54,30 +55,33 @@ public class DrawCanvas extends View {
                 cube.deselect();
                 cube.checkSelection(e.getX(), e.getY());
 
+                /*ArrayList<Neighbor> loop = cube.getSelected(e.getX(), e.getY(), 2);
 
-                ArrayList<Neighbor> loop = cube.getSelected(e.getX(), e.getY(), 2);
+                int l = 0;
+                if(loop != null) l = loop.size();
 
-                int l = loop.size();
-                if(loop != null && l > 0){
+                if(l > 0){
                     int[] colors = new int[l];
 
                     for(int i = 0; i<l; i++){
-                        Neighbor nextTile = loop.get((i+1)%l);
+                        Neighbor nextTile = loop.get((i+5)%l);
                         colors[i] = nextTile.getColor();
                     }
 
                     for(int i = 0; i<l; i++){
-                        loop.get(i).setColor(0xFF0000FF);
+                        loop.get(i).setColor(colors[i]);
                     }
 
                     invalidate();
-                }
+                }//*/
                 break;
 
 			case MotionEvent.ACTION_UP:
 				break;
 
 			case MotionEvent.ACTION_MOVE:
+                cube.deselect();
+                cube.checkSelection(e.getX(), e.getY());
 				break;
 		}
 
