@@ -10,6 +10,8 @@ import com.ramblescript.uncubed.view.FaceViewPolar;
  * Created by dmitri on 20/09/15.
  */
 public class RadialFaceViewPlacementStrategy extends AbstractFaceViewPlacementStrategy{
+
+    public float adjustment = 1.5f;
     public void execute(FaceView[] components, FaceView[][] componentFaces, int d, int div, float side) {
 
         side = side/2;
@@ -18,15 +20,14 @@ public class RadialFaceViewPlacementStrategy extends AbstractFaceViewPlacementSt
             Face f = new Face(4);
 
             int layer = (int) Math.floor(i/d);
-            double radius = side * (1.5 + Math.floor(i/d));
+            double radius = side * (adjustment + Math.floor(i/d));
             double theta = 360 / d * i + 360 / d / 2 * layer;
             double rtheta = theta/180*Math.PI;
             double width = Math.PI / d;
 
             FaceView fv = new FaceViewPolar(f, Color.HSVToColor(255, new float[]{i * 360 / j, 1, 0.5f}))
                     .setRect((float) (rtheta), (float) radius, (float) width, side, (float)(Math.PI/4*1));
-            //fv.setRotation((float) theta);
-            fv.deselect();
+
             fv.id = i;
 
             components[i] = fv;
@@ -40,9 +41,7 @@ public class RadialFaceViewPlacementStrategy extends AbstractFaceViewPlacementSt
                 FaceViewPolar faceTile = new FaceViewPolar(cf, fv.getColor());
                 faceTile.setParent(fv);
                 faceTile.setRect(
-                                /*(float) (stepT*1.41 * (k%div) - width/2),
-                                (float) (stepR*1.41 * Math.floor(k/div) - side/2),
-                                /*/(float) (stepT * (k%div) - stepT * Math.floor(k/div)),
+                                (float) (stepT * (k%div) - stepT * Math.floor(k/div)),
                                 (float) (-stepR * (1+k%div) - stepR * Math.floor(k/div) + side),//*/
                                 (float) (stepT),
                                 (float) (stepR), 0);
@@ -51,7 +50,7 @@ public class RadialFaceViewPlacementStrategy extends AbstractFaceViewPlacementSt
                 cubeFaceComponents[k] = faceTile;
             }
 
-            fv.setColor(64, 200, 200, 220);
+            fv.setColor(128, 200, 200, 220);
             fv.setComponents(cubeFaceComponents);
             fv.deselect();
             componentFaces[i] = cubeFaceComponents;

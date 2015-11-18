@@ -32,9 +32,14 @@ public class FaceView implements UC_Interactive{
 	protected float y = 0;
 	protected float w = 32;
 	protected float h = 32;
-	protected double scale = 1;
 
-	private double sqrt2 = Math.sqrt(2);
+    protected double scale = 1;
+    public double getScale() {
+        return scale;
+    }
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
 
     protected FaceView parent = null;
 
@@ -173,7 +178,7 @@ public class FaceView implements UC_Interactive{
 		boolean selected = Math.abs(dx - this.w/2) < this.w/2 + .5
 						&& Math.abs(dy - this.h/2) < this.h/2 + .5;
 
-        ArrayList<Neighbor> selection = null;
+        ArrayList<Neighbor> selection;
 		if(model != null){
 			if(selected) model.select();
 
