@@ -4,18 +4,15 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.ScaleGestureDetector;
+import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View;
 
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
-import com.ramblescript.uncubed.Utils.Coords;
-import com.ramblescript.uncubed.model.Neighbor;
 import com.ramblescript.uncubed.view.FaceView;
-import com.ramblescript.uncubed.view.UC_Interactive;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import com.ramblescript.uncubed.view.UILayer;
 
 /**
  * Created by Dmitri on 18/5/15.
@@ -29,6 +26,9 @@ public class DrawCanvas extends View {
 
 	private FaceView cube;
 
+    ScaleGestureDetector scaler;
+    UILayer shifter = null;
+
 	public DrawCanvas(Context context, AttributeSet attrs){
 		super(context, attrs);
 
@@ -39,6 +39,24 @@ public class DrawCanvas extends View {
         UncubedGame.setPreferredDivisions(3);
 
 		cube = UncubedGame.getInstance().setRect(getWidth()/2, getHeight()/2, 0, 0, 0);
+
+        scaler = new ScaleGestureDetector(context, new OnScaleGestureListener() {
+            private double tmpscale;
+            @Override
+            public void onScaleEnd(ScaleGestureDetector detector) {
+            }
+            @Override
+            public boolean onScaleBegin(ScaleGestureDetector detector) {
+                tmpscale = cube.getScale();
+                return true;
+            }
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                Log.d("SCALE", "zoom ongoing, scale: " + detector.getScaleFactor());
+                cube.setScale(tmpscale * detector.getScaleFactor());
+                return false;
+            }
+        });
 
 		invalidate();
 	}
@@ -61,52 +79,29 @@ public class DrawCanvas extends View {
         invalidate();
 	}
 
-    private int primaryPID = -1;
-    private int secondaryPID = -1;
-    private double lastDistance = -1;
 	@Override
 	public boolean onTouchEvent(MotionEvent e){
+
+        scaler.onTouchEvent(e);
+        if (scaler.isInProgress()) {
+            cube.deselect();
+            return true;
+        }
+
 		switch(e.getAction()){
 			case MotionEvent.ACTION_DOWN:
                 cube.deselect();
                 cube.checkSelection(e.getX(), e.getY());
-                //cube.showUI;
                 invalidate();
                 break;
 
 			case MotionEvent.ACTION_UP:
-                cube.deselect();
                 //cube.hideUI;
 				break;
 
 			case MotionEvent.ACTION_MOVE:
-                if (e.getPointerCount() > 1) {
-                    // scale & rotate
-                    float dx = e.getX(secondaryPID) - e.getX(primaryPID);
-                    float dy = e.getY(secondaryPID) - e.getY(primaryPID);
-                    double distance = Math.sqrt(dx*dx+dy*dy);
-
-                    if(lastDistance == -1) ;lastDistance = distance;
-
-                    cube.setScale(lastDistance/distance);
-                }else {
-                    // interact normally
-                    cube.deselect();
-                    cube.checkSelection(e.getX(), e.getY());
-                }
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                // starts scaling & rotating
-                if(e.getPointerCount() == 2) {
-                    primaryPID = e.getPointerId(0);
-                    secondaryPID = e.getPointerId(1);
-                }
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                // stops scaling & rotating
-                primaryPID = -1;
-                secondaryPID = -1;
-                lastDistance = -1;
+                cube.deselect();
+                cube.checkSelection(e.getX(), e.getY());
                 break;
 		}
 

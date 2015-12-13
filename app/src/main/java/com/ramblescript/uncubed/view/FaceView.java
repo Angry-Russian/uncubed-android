@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Created by Dmitri on 6/12/2015.
  */
-public class FaceView implements UC_Interactive{
+public class FaceView implements iFaceComponent {
 
 	public int id = -1;
 
-	protected UC_Interactive[] components;
+	protected iFaceComponent[] components;
 
 	protected Paint paint = new Paint();
 	protected Path shape = new Path();
@@ -123,8 +123,8 @@ public class FaceView implements UC_Interactive{
         //--
     }
 
-    public void setComponents(UC_Interactive[] components){this.components = components;}
-	public UC_Interactive[] getComponents(){return components;}
+    public void setComponents(iFaceComponent[] components){this.components = components;}
+	public iFaceComponent[] getComponents(){return components;}
 
 	public FaceView setRect(float x, float y, float w, float h, double rotation){
 		this.x = x; this.y = y; this.w = w; this.h = h; this.rotation = rotation;
@@ -172,8 +172,8 @@ public class FaceView implements UC_Interactive{
 		double d = Math.sqrt(dx*dx + dy*dy);
 
 		// compensate for rotation and use as new values
-		dx = Math.cos(rad-r) * d + this.w/2;
-		dy = Math.sin(rad-r) * d + this.h/2;
+		dx = (Math.cos(rad-r) * d + this.w/2)/this.scale;
+		dy = (Math.sin(rad-r) * d + this.h/2)/this.scale;
 
 		boolean selected = Math.abs(dx - this.w/2) < this.w/2 + .5
 						&& Math.abs(dy - this.h/2) < this.h/2 + .5;
